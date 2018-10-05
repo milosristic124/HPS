@@ -34,6 +34,7 @@ export default StyleSheet.create({
     flex: 1,
     width: Metrics.screenWidth,
     // alignItems: 'center'
+    marginHorizontal: 20,
   },
   list: {
     flex: 1,
@@ -51,7 +52,7 @@ export default StyleSheet.create({
   },
   filterUserInput: { 
     height: 35,
-    width: 100,
+    width : (Metrics.screenWidth - 210)/2,
     fontSize: 16, 
     color: 'white', 
     backgroundColor: 'transparent', 
@@ -77,12 +78,11 @@ export default StyleSheet.create({
   },
   filterDateInput: { 
     height: 35,
-    width: 100,
     fontSize: 16, 
     color: 'white', 
     backgroundColor: 'transparent', 
     fontWeight: 'bold',
-    marginLeft: 20,
+    width: (Metrics.screenWidth - 210)/2,
     paddingLeft: 5, 
     paddingRight: 5,
     borderColor: 'white',
@@ -102,9 +102,16 @@ export default StyleSheet.create({
     borderWidth: 1, 
     borderColor: 'white'
   },
+  dateContainer : {
+    marginTop: 20, 
+    marginLeft: 20, 
+    flexDirection: 'row',  
+    width: Metrics.screenWidth - 110,
+    
+  },
   filterHouseInput: { 
     height: 35,
-    width: 260,
+    width: Metrics.screenWidth - 150,
     fontSize: 16, 
     color: 'white', 
     backgroundColor: 'transparent', 
@@ -119,23 +126,32 @@ export default StyleSheet.create({
     borderRightWidth: 0,
     borderTopLeftRadius: 5,
     borderBottomLeftRadius: 5,
+    
   },
   filterHouseSelect: { 
+    borderWidth :1,
+    borderColor : 'blue',
     width: 40, 
     height: 35, 
     backgroundColor: 'transparent', 
     borderTopRightRadius: 5, 
     borderBottomRightRadius: 5, 
     borderWidth: 1, 
-    borderColor: 'white'
+    borderColor: 'white',
+  },
+  item_top: {
+    justifyContent: 'space-between', 
+    flexDirection: 'row', 
+    paddingBottom: 5,
+    paddingTop: 10,
   },
   line: { 
     justifyContent: 'space-between', 
     flexDirection: 'row', 
     borderBottomWidth: 1, 
     borderBottomColor: 'white',
-    paddingBottom: 15,
-    paddingTop: 15,
+    paddingBottom: 10,
+    paddingTop: 5,
   },
   listUserItem: {
     paddingLeft: 5, 

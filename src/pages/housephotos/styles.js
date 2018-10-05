@@ -33,8 +33,13 @@ export default StyleSheet.create({
   contentView: {
     flex: 1,
     width: Metrics.screenWidth,
-    alignItems: 'center'
+    alignItems: 'center',
   },
+  flatListStyle: {
+    flex: 1,
+    width: Metrics.screenWidth
+  },
+
   list: {
     flex: 1,
     width: Metrics.screenWidth,
@@ -45,4 +50,41 @@ export default StyleSheet.create({
     height: Metrics.screenWidth / 2 + 100,
     margin: Metrics.padding / 2, 
   },
+  usernameStyle: {
+    paddingTop : 10,
+    paddingLeft : 10,
+    fontSize: 16,
+    fontWeight: 'normal', 
+    color: 'white',
+    backgroundColor: 'transparent',
+  },
+  dateStyle :  {
+    paddingLeft : 10,
+    fontSize: 12,
+    fontWeight: 'normal', 
+    color: 'white',
+    backgroundColor: 'transparent',
+  },
+  imageStyle : {
+    marginTop : 10,
+    height: 300,
+    marginBottom : 10
+  },
+  descriptionStyle : {
+    paddingLeft : 10,
+    fontSize: 16,
+    fontWeight: 'normal', 
+    color: 'white',
+    backgroundColor: 'transparent',
+  },
+  iconText : {
+    color:  'white'
+  },
+  itemContainer: {
+    backgroundColor : '#15181E',
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop : 5,
+    marginBottom: 5
+  }
 });

@@ -40,31 +40,33 @@ export default StyleSheet.create({
     borderRadius: 5, 
     borderWidth: 1,
     width: Metrics.screenWidth * 0.9,
-    height: Metrics.itemHeight,
+    height: 70,
     marginTop: Metrics.padding,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingLeft: Metrics.padding
-  },
-  itemContainer1: {
-    borderColor: 'white', 
-    borderRadius: 5, 
-    borderWidth: 1,
-    width: Metrics.screenWidth * 0.9,
-    height: Metrics.itemHeight * 1.5,
-    marginTop: Metrics.padding,
-    flexDirection: 'row',
-    alignItems: 'center',
+    marginBottom: 2 * Metrics.padding,
     paddingLeft: Metrics.padding
   },
   checkbtn: {
-    width: Metrics.screenWidth * 0.75, 
+    width: Metrics.screenWidth * 0.9, 
     height: Metrics.itemHeight, 
     borderRadius: 5, 
     backgroundColor: Colors.btnColor1, 
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 3 * Metrics.padding,
-    marginBottom: 2 * Metrics.padding
+    marginTop: 1 * Metrics.padding,
+    marginBottom: 1 * Metrics.padding
   },
+  imgUploadBtn: {
+    width: Metrics.screenWidth * 0.9, 
+    height: Metrics.itemHeight, 
+    borderRadius: 5, 
+    backgroundColor: Colors.btnColor1, 
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 2 * Metrics.padding,
+    marginBottom: 1 * Metrics.padding
+  },
+  previewImg: {
+      width : 200,
+      height : 200
+  }
 });

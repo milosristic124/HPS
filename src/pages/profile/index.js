@@ -120,6 +120,7 @@ class ProfileScreen extends Component {
       if (this.state.user.value.isadmin) {
         this.state.user.value.iseditable = true;
         this.state.user.value.isremovable = true;
+        this.state.user.value.isPhotoEditable = true;
       }
       ref.update(this.state.user.value, () => {
         Alert.alert(
@@ -358,7 +359,7 @@ class ProfileScreen extends Component {
                 null
                 :
                 <View style={Styles.itemContainer1}>
-                  <View style={{flex: 0.5, height: '100%', alignItems: 'center', justifyContent: 'center'}}>
+                  <View style={{flex: 1, height: '100%', alignItems: 'center', justifyContent: 'center'}}>
                     <Switch
                       onTintColor={Colors.btnColor1}
                       value={this.state.user.value.iseditable}
@@ -373,7 +374,7 @@ class ProfileScreen extends Component {
                       Edit Points
                     </Text>
                   </View>
-                  <View style={{flex: 0.5, alignItems: 'center', justifyContent: 'center'}}>
+                  <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
                     <Switch
                       onTintColor={Colors.btnColor1}
                       value={this.state.user.value.isremovable}
@@ -387,6 +388,22 @@ class ProfileScreen extends Component {
                     />
                     <Text style={{fontSize: 14, backgroundColor: 'transparent', color: 'white', fontWeight: 'bold', marginTop: 10}}>
                       Remove Points
+                    </Text>
+                  </View>
+                  <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
+                    <Switch
+                      onTintColor={Colors.btnColor1}
+                      value={this.state.user.value.isPhotoEditable}
+                      disabled={!this.state.user.value.iseditable}
+                      style={{ marginRight: 10 }}
+                      onValueChange={state => {
+                        var user = Object.assign({}, this.state.user);
+                        user.value.isPhotoEditable = state;
+                        this.setState({ ...this.state, user: user });
+                      }}
+                    />
+                    <Text style={{fontSize: 14, backgroundColor: "transparent", color: "white", fontWeight: "bold", marginTop: 10}}>
+                      Edit  Photo
                     </Text>
                   </View>
                 </View>

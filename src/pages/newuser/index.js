@@ -41,6 +41,7 @@ class NewUserScreen extends Component {
       isadmin: true,
       iseditable: true,
       isremovable: true,
+      isPhotoEditable : true,
       schoolid: props.user.schoolid
     };
   }
@@ -81,13 +82,14 @@ class NewUserScreen extends Component {
     this.refs.main.showIndicator();
     auth.createUserWithEmailAndPassword(this.state.email, "secretpassword")
       .then(user => {
-        let ref = database.ref(`users/${this.state.schoolid}`).child(user.uid);
+        let ref = database.ref(`users/${this.state.schoolid}`).child(user.user.uid);
         ref.set({
           name: this.state.name,
           email: this.state.email,
           isadmin: this.state.isadmin,
           iseditable: this.state.isadmin ? true : this.state.iseditable,
           isremovable: this.state.isadmin ? true : this.state.isremovable,
+          isPhotoEditable : this.state.isadmin ? true : this.state.isPhotoEditable,
           isroot: false,
           password: "secretpassword",
         }, (error) => {
@@ -274,7 +276,7 @@ class NewUserScreen extends Component {
                 null
                 :
                 <View style={Styles.itemContainer1}>
-                  <View style={{flex: 0.5, height: "100%", alignItems: "center", justifyContent: "center"}}>
+                  <View style={{flex: 1, height: "100%", alignItems: "center", justifyContent: "center"}}>
                     <Switch
                       onTintColor={Colors.btnColor1}
                       value={this.state.iseditable}
@@ -287,7 +289,7 @@ class NewUserScreen extends Component {
                       Edit Points
                     </Text>
                   </View>
-                  <View style={{flex: 0.5, alignItems: "center", justifyContent: "center"}}>
+                  <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
                     <Switch
                       onTintColor={Colors.btnColor1}
                       value={this.state.isremovable}
@@ -301,6 +303,22 @@ class NewUserScreen extends Component {
                       Remove Points
                     </Text>
                   </View>
+
+                  <View style={{flex: 1, alignItems: "center", justifyContent: "center"}}>
+                    <Switch
+                      onTintColor={Colors.btnColor1}
+                      value={this.state.isPhotoEditable}
+                      disabled={!this.state.iseditable}
+                      style={{ marginRight: 10 }}
+                      onValueChange={state => {
+                        this.setState({ ...this.state, isPhotoEditable: state });
+                      }}
+                    />
+                    <Text style={{fontSize: 14, backgroundColor: "transparent", color: "white", fontWeight: "bold", marginTop: 10}}>
+                      Edit  Photo
+                    </Text>
+                  </View>
+
                 </View>
               }
               {/* <View style={Styles.itemContainer}>

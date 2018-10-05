@@ -37,22 +37,22 @@ class LoginScreen extends Component {
     this.state = {
       schoolid: '',
       email: '',
-      password: ''
+      password: '',
+      isLogined: false
     }
   }
   componentDidMount() {
     this.props.setNavigation(this.props.navigation);
 
-    AsyncStorage.getItem('schoolid', (error, result) => {
-      if(!error) {
-        this.setState({schoolid: result});
-      }
-      AsyncStorage.getItem('email', (error, result) => {
-        if(!error) {
-          this.setState({email: result});
-        }
-      });
-    });
+     AsyncStorage.multiGet(['schoolid','email','password','isLogined'], (err, stores) => {
+        stores.map((result, i, store) => {
+          // get at each store's key/value so you can work with it
+          let key = store[i][0];
+          let value = store[i][1];
+          this.setState({[key] : value});
+        });
+        if(this.state.isLogined) this.loginBtnClicked(); 
+    }); 
   }
 
   schoolIdInputChanged(text) {
@@ -112,14 +112,14 @@ class LoginScreen extends Component {
             value.uid = user.user.uid;
             this.props.setUser(value);
 
-            AsyncStorage.setItem('schoolid', this.state.schoolid).then(error => {
-              return AsyncStorage.setItem('email', this.state.email);
-            }).then(error => {
+             AsyncStorage.multiSet([['isLogined' , 'true'],['schoolid', this.state.schoolid], ['email', this.state.email], ['password', this.state.password]], 
+            (error) => {
               if (!error) {
                 this.refs.main.hideIndicator();
                 this.props.navigation.navigate('dashboard');
               }
-            });
+            }); 
+            
         });
       });
     })

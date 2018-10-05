@@ -22,5 +22,8 @@ export default Assets = {
   master_rightarrow: require("./resources/master_rightarrow.png"),
   edit_btn: require("./resources/edit_btn.png"),
   check_btn: require("./resources/check_btn.png"),
-  crown: require("./resources/crown.png")
+  crown: require("./resources/crown.png"),
+  house_photo : require("./resources/house_photo.png"),
+  point_history : require("./resources/point_history.png"),
+  setting : require("./resources/setting.png")
 };

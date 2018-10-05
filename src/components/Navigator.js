@@ -51,9 +51,12 @@ const Drawer = createDrawerNavigator(
     housephotos: {
       screen: HousePhotosScreen
     }
+    // newpost: {
+    //   screen: NewPostScreen
+    // }
   },
   {
-    drawerWidth: Metrics.screenWidth * 0.75,
+    drawerWidth: Metrics.screenWidth * 0.8,
     contentComponent: SideMenu,
     initialRouteName: 'dashboard',
     contentOptions: {
@@ -111,5 +114,15 @@ const Navigator = createStackNavigator(
     headerMode: 'none'
   }
 );
+const defaultGetStateForAction = Drawer.router.getStateForAction;
 
+Drawer.router.getStateForAction = (action, state) => {
+
+  //use 'DrawerOpen' to capture drawer open event
+  if (state && action.type === 'Navigation/NAVIGATE' && action.routeName === 'DrawerClose') {
+      console.log('DrawerClose');
+      //write the code you want to deal with 'DrawerClose' event
+  }
+  return defaultGetStateForAction(action, state);
+};
 export default Navigator;

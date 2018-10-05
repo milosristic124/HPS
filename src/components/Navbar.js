@@ -45,9 +45,7 @@ export default class Navbar extends Component {
               justifyContent: "center",
             }}
           >
-            {this.props.title !== 'Point History' ?
-            <Image source={this.props.logo} resizeMode="contain" style={{height: Metrics.navbarHeight * 0.8, width: 40}}/>
-            : null }
+            <Image source={this.props.logo} resizeMode="contain" style={{height: Metrics.navbarHeight * 0.8, width: 40, tintColor: 'white'}}/>
               <Text style={{color: "white", fontSize: 18, backgroundColor: "transparent"}}> 
                 {this.props.title}
               </Text>

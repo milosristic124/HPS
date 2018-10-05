@@ -15,7 +15,8 @@ import {
   ImageBackground,
   Alert,
   TextInput,
-  ListView
+  ListView,
+  Dimensions,
 } from 'react-native';
 import firebase from '../../firebase';
 import { NavigationActions } from 'react-navigation';
@@ -25,7 +26,7 @@ import FastImage from 'react-native-fast-image';
 import ModalSelector from 'react-native-modal-selector';
 import Autocomplete from 'react-native-autocomplete-input';
 // import AutoSuggest from 'autosuggest';
-
+import Icon from 'react-native-vector-icons/Entypo';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import Styles from './styles';
 import Assets from '../../../assets';
@@ -33,6 +34,7 @@ import Metrics from '../../themes/Metrics';
 import Colors from '../../themes/Colors';
 import { ActivityComponent, ImageTextInput, Navbar, PointInput } from '../../components';
 
+const { width, height } = Dimensions.get('window');
 const auth = firebase.auth();
 const database = firebase.database();
 
@@ -139,34 +141,39 @@ class PointHistoryScreen extends Component {
       selectedDateBegin: today_begin,
       selectedDateEnd: today_end,
     });
+    this.refs.main.showIndicator();
     ref.orderByChild('date').startAt(today_begin).endAt(today_end).once('value')
       .then((snap) => {
         const val = snap.val();
         !val && this.setState({ point_history: [], no_history: true, });        
         const point_history = [];
         let index = 0;
-        Object.keys(val).forEach(key => {
-          let ref1 = database.ref(`users/${this.state.schoolid}/${val[key].user_id}`);
+        Object.keys(val).forEach(async key => {
+        
           let user_name = '';
           let user_id = val[key].user_id;
-          ref1.once('value')
-            .then(snap => {
-                const value = snap.val();
-                var date = new Date(val[key].date * 1000);
-                user_name = value.name;
-                point_history.push({ index: index++, user: value.name, date: date.toLocaleString(), point: val[key].point});
-                this.setState({
-                  point_history: point_history,
-                  no_history: false,
-                })
-            })
-            .catch(err => {
-                console.warn('get each house history error: ', err)
-            })
+          var snap = await database.ref(`users/${this.state.schoolid}/${val[key].user_id}`).once('value');
+          const value = snap.val();
+          user_name = value.name;
+
+          var date = new Date(val[key].date * 1000);
+          var dateWithouthSecond = date.toLocaleString([],{year:'numeric', month:'2-digit', day:'2-digit', hour: '2-digit', minute:'2-digit'});
+          // get house name
+          let house_id = val[key].house_id;
+          var snap1 = await database.ref(`houses/${this.state.schoolid}/${house_id}`).once('value');
+          const value1 = snap1.val();
+          house_name = value1.name;
+          point_history.push({ index: index++, user: value.name, house_name : house_name,  date: dateWithouthSecond, point: val[key].point});
+          this.setState({
+            point_history: point_history,
+            no_history: false,
+          })
+          this.refs.main.hideIndicator() 
         });
         console.log('Point array', point_history);
       })
       .catch(err => {
+        this.refs.main.hideIndicator();
         console.log(err)
       })
   }
@@ -224,6 +231,8 @@ class PointHistoryScreen extends Component {
     let id_no = parseInt(this.state.selectedHouseID, 10);
     let user_id = id;
     let ref = database.ref(`point_histories`);
+    this.refs.main.showIndicator();
+  
     if( id !==  'all' && id_no !== -1) {
       try {
         let snapshot = await ref.orderByChild('filter_all').equalTo(`${user_id}_${id_no}_${this.state.selectedDateBegin}_${this.state.selectedDateEnd}`).once('value')
@@ -239,14 +248,24 @@ class PointHistoryScreen extends Component {
           const value = snap.val();
           var date = new Date(val[key].date * 1000);
           user_name = value.name;
-          point_history.push({ index: index++, user: value.name, date: date.toLocaleString(), point: val[key].point});
+          var dateWithouthSecond = date.toLocaleString([],{year:'numeric', month:'2-digit', day:'2-digit', hour: '2-digit', minute:'2-digit'});
+          // get house name
+          let house_id = val[key].house_id;
+          var snap1 = await database.ref(`houses/${this.state.schoolid}/${house_id}`).once('value');
+          const value1 = snap1.val();
+          house_name = value1.name;
+          point_history.push({ index: index++, user: value.name, house_name : house_name,  date: dateWithouthSecond, point: val[key].point});
+          
           this.setState({
             point_history: point_history,
             no_history: false,
           })
+          this.refs.main.hideIndicator();
         });
         console.log('By house-->', point_history);
+        
       } catch (error) {
+        this.refs.main.hideIndicator();
       }
     }
     if ( id !== 'all' && id_no == -1) {
@@ -264,14 +283,23 @@ class PointHistoryScreen extends Component {
           const value = snap.val();
           var date = new Date(val[key].date * 1000);
           user_name = value.name;
-          point_history.push({ index: index++, user: value.name, date: date.toLocaleString(), point: val[key].point});
+          var dateWithouthSecond = date.toLocaleString([],{year:'numeric', month:'2-digit', day:'2-digit', hour: '2-digit', minute:'2-digit'});
+          
+          // get house name
+          let house_id = val[key].house_id;
+          var snap1 = await database.ref(`houses/${this.state.schoolid}/${house_id}`).once('value');
+          const value1 = snap1.val();
+          house_name = value1.name;
+          point_history.push({ index: index++, user: value.name, house_name : house_name,  date: dateWithouthSecond, point: val[key].point});
           this.setState({
             point_history: point_history,
             no_history: false,
           })
+          this.refs.main.hideIndicator();
         });
         console.log('By house-->', point_history);
       } catch (error) {
+        this.refs.main.hideIndicator();
       }
     }
     if ( id === 'all' && id_no == -1) {
@@ -289,18 +317,27 @@ class PointHistoryScreen extends Component {
           const value = snap.val();
           var date = new Date(val[key].date * 1000);
           user_name = value.name;
-          point_history.push({ index: index++, user: value.name, date: date.toLocaleString(), point: val[key].point});
+          var dateWithouthSecond = date.toLocaleString([],{year:'numeric', month:'2-digit', day:'2-digit', hour: '2-digit', minute:'2-digit'});
+          // get house name
+          let house_id = val[key].house_id;
+          var snap1 = await database.ref(`houses/${this.state.schoolid}/${house_id}`).once('value');
+          const value1 = snap1.val();
+          house_name = value1.name;
+          point_history.push({ index: index++, user: value.name, house_name : house_name,  date: dateWithouthSecond, point: val[key].point});
           this.setState({
             point_history: point_history,
             no_history: false,
           })
+          this.refs.main.hideIndicator();
         });
         console.log('By house-->', point_history);
       } catch (error) {
+        this.refs.main.hideIndicator();
       }
     }
     if ( id === 'all' && id_no !== -1) {
       try {
+        this.refs.main.showIndicator();
         let snapshot = await ref.orderByChild('filter_house_date').equalTo(`${id_no}_${this.state.selectedDateBegin}_${this.state.selectedDateEnd}`).once('value')
         var val = snapshot.val();
         !val && this.setState({ point_history: [], no_history: true, });        
@@ -314,14 +351,23 @@ class PointHistoryScreen extends Component {
           const value = snap.val();
           var date = new Date(val[key].date * 1000);
           user_name = value.name;
-          point_history.push({ index: index++, user: value.name, date: date.toLocaleString(), point: val[key].point});
+          var dateWithouthSecond = date.toLocaleString([],{year:'numeric', month:'2-digit', day:'2-digit', hour: '2-digit', minute:'2-digit'});
+          
+          // get house name
+          let house_id = val[key].house_id;
+          var snap1 = await database.ref(`houses/${this.state.schoolid}/${house_id}`).once('value');
+          const value1 = snap1.val();
+          house_name = value1.name;
+          point_history.push({ index: index++, user: value.name, house_name : house_name,  date: dateWithouthSecond, point: val[key].point});
           this.setState({
             point_history: point_history,
             no_history: false,
           })
+          this.refs.main.hideIndicator();
         });
         console.log('By house-->', point_history);
       } catch (error) {
+        this.refs.main.hideIndicator();
       }
     }
   }
@@ -334,6 +380,7 @@ class PointHistoryScreen extends Component {
     let id_no = parseInt(id, 10);
     let user_id = this.state.selectedUserID;
     let ref = database.ref(`point_histories`);
+    this.refs.main.showIndicator();
     if( id !== -1 && user_id !== 'all') {
       try {
         let snapshot = await ref.orderByChild('filter_all').equalTo(`${this.state.selectedUserID}_${id_no}_${this.state.selectedDateBegin}_${this.state.selectedDateEnd}`).once('value')
@@ -349,14 +396,22 @@ class PointHistoryScreen extends Component {
           const value = snap.val();
           var date = new Date(val[key].date * 1000);
           user_name = value.name;
-          point_history.push({ index: index++, user: value.name, date: date.toLocaleString(), point: val[key].point});
+          var dateWithouthSecond = date.toLocaleString([],{year:'numeric', month:'2-digit', day:'2-digit', hour: '2-digit', minute:'2-digit'});
+          // get house name
+          let house_id = val[key].house_id;
+          var snap1 = await database.ref(`houses/${this.state.schoolid}/${house_id}`).once('value');
+          const value1 = snap1.val();
+          house_name = value1.name;
+          point_history.push({ index: index++, user: value.name, house_name : house_name,  date: dateWithouthSecond, point: val[key].point});
           this.setState({
             point_history: point_history,
             no_history: false,
           })
+          this.refs.main.hideIndicator();
         });
         console.log('By house-->', point_history);
       } catch (error) {
+        this.refs.main.hideIndicator();
       }
     }
     if( id !== -1 && user_id === 'all') {
@@ -374,14 +429,22 @@ class PointHistoryScreen extends Component {
           const value = snap.val();
           var date = new Date(val[key].date * 1000);
           user_name = value.name;
-          point_history.push({ index: index++, user: value.name, date: date.toLocaleString(), point: val[key].point});
+          var dateWithouthSecond = date.toLocaleString([],{year:'numeric', month:'2-digit', day:'2-digit', hour: '2-digit', minute:'2-digit'});
+          // get house name
+          let house_id = val[key].house_id;
+          var snap1 = await database.ref(`houses/${this.state.schoolid}/${house_id}`).once('value');
+          const value1 = snap1.val();
+          house_name = value1.name;
+          point_history.push({ index: index++, user: value.name, house_name : house_name,  date: dateWithouthSecond, point: val[key].point});
           this.setState({
             point_history: point_history,
             no_history: false,
           })
+          this.refs.main.hideIndicator();
         });
         console.log('By house-->', point_history);
       } catch (error) {
+        this.refs.main.hideIndicator();
       }
     }
     if( id == -1 && user_id === 'all') {
@@ -399,14 +462,22 @@ class PointHistoryScreen extends Component {
           const value = snap.val();
           var date = new Date(val[key].date * 1000);
           user_name = value.name;
-          point_history.push({ index: index++, user: value.name, date: date.toLocaleString(), point: val[key].point});
+          var dateWithouthSecond = date.toLocaleString([],{year:'numeric', month:'2-digit', day:'2-digit', hour: '2-digit', minute:'2-digit'});
+          // get house name
+          let house_id = val[key].house_id;
+          var snap1 = await database.ref(`houses/${this.state.schoolid}/${house_id}`).once('value');
+          const value1 = snap1.val();
+          house_name = value1.name;
+          point_history.push({ index: index++, user: value.name, house_name : house_name,  date: dateWithouthSecond, point: val[key].point});
           this.setState({
             point_history: point_history,
             no_history: false,
           })
+          this.refs.main.hideIndicator();
         });
         console.log('By house-->', point_history);
       } catch (error) {
+        this.refs.main.hideIndicator();
       }
     }
     if( id == -1 && user_id !== 'all'){
@@ -424,14 +495,22 @@ class PointHistoryScreen extends Component {
           const value = snap.val();
           var date = new Date(val[key].date * 1000);
           user_name = value.name;
-          point_history.push({ index: index++, user: value.name, date: date.toLocaleString(), point: val[key].point});
+          var dateWithouthSecond = date.toLocaleString([],{year:'numeric', month:'2-digit', day:'2-digit', hour: '2-digit', minute:'2-digit'});
+          // get house name
+          let house_id = val[key].house_id;
+          var snap1 = await database.ref(`houses/${this.state.schoolid}/${house_id}`).once('value');
+          const value1 = snap1.val();
+          house_name = value1.name;
+          point_history.push({ index: index++, user: value.name, house_name : house_name,  date: dateWithouthSecond, point: val[key].point});
           this.setState({
             point_history: point_history,
             no_history: false,
           })
+          this.refs.main.hideIndicator();
         });
         console.log('By house-->', point_history);
       } catch (error) {
+        this.refs.main.hideIndicator();
       }
     }
   }
@@ -461,6 +540,7 @@ class PointHistoryScreen extends Component {
     });
     let user_id = this.state.selectedUserID;
     let house_id = parseInt(this.state.selectedHouseID, 10);
+    this.refs.main.showIndicator();
     if (user_id === 'all' && house_id == -1) {
       try {
         let snapshot = await ref.orderByChild('date').startAt(day_begin).endAt(day_end).once('value')
@@ -475,15 +555,23 @@ class PointHistoryScreen extends Component {
           let snap = await ref1.once('value')
           const value = snap.val();
           var date = new Date(val[key].date * 1000);
+          var dateWithouthSecond = date.toLocaleString([],{year:'numeric', month:'2-digit', day:'2-digit', hour: '2-digit', minute:'2-digit'});
           user_name = value.name;
-          point_history.push({ index: index++, user: value.name, date: date.toLocaleString(), point: val[key].point});
+          // get house name
+          let house_id = val[key].house_id;
+          var snap1 = await database.ref(`houses/${this.state.schoolid}/${house_id}`).once('value');
+          const value1 = snap1.val();
+          house_name = value1.name;
+          point_history.push({ index: index++, user: value.name, house_name : house_name,  date: dateWithouthSecond, point: val[key].point});
           this.setState({
             point_history: point_history,
             no_history: false,
           })
+          this.refs.main.hideIndicator();
         });
         console.log('By house-->', point_history);
       } catch (error) {
+        this.refs.main.hideIndicator();
       }
     }
     if (user_id === 'all' && house_id !== -1) {
@@ -500,15 +588,23 @@ class PointHistoryScreen extends Component {
           let snap = await ref1.once('value')
           const value = snap.val();
           var date = new Date(val[key].date * 1000);
+          var dateWithouthSecond = date.toLocaleString([],{year:'numeric', month:'2-digit', day:'2-digit', hour: '2-digit', minute:'2-digit'});
           user_name = value.name;
-          point_history.push({ index: index++, user: value.name, date: date.toLocaleString(), point: val[key].point});
+          // get house name
+          let house_id = val[key].house_id;
+          var snap1 = await database.ref(`houses/${this.state.schoolid}/${house_id}`).once('value');
+          const value1 = snap1.val();
+          house_name = value1.name;
+          point_history.push({ index: index++, user: value.name, house_name : house_name,  date: dateWithouthSecond, point: val[key].point});
           this.setState({
             point_history: point_history,
             no_history: false,
           })
+          this.refs.main.hideIndicator();
         });
         console.log('By house-->', point_history);
       } catch (error) {
+        this.refs.main.hideIndicator();
       }
     }
 
@@ -526,15 +622,23 @@ class PointHistoryScreen extends Component {
           let snap = await ref1.once('value')
           const value = snap.val();
           var date = new Date(val[key].date * 1000);
+          var dateWithouthSecond = date.toLocaleString([],{year:'numeric', month:'2-digit', day:'2-digit', hour: '2-digit', minute:'2-digit'});
           user_name = value.name;
-          point_history.push({ index: index++, user: value.name, date: date.toLocaleString(), point: val[key].point});
+          // get house name
+          let house_id = val[key].house_id;
+          var snap1 = await database.ref(`houses/${this.state.schoolid}/${house_id}`).once('value');
+          const value1 = snap1.val();
+          house_name = value1.name;
+          point_history.push({ index: index++, user: value.name, house_name : house_name,  date: dateWithouthSecond, point: val[key].point});
           this.setState({
             point_history: point_history,
             no_history: false,
           })
+          this.refs.main.hideIndicator();
         });
         console.log('By house-->', point_history);
       } catch (error) {
+        this.refs.main.hideIndicator();
       }
     }
 
@@ -552,15 +656,23 @@ class PointHistoryScreen extends Component {
           let snap = await ref1.once('value')
           const value = snap.val();
           var date = new Date(val[key].date * 1000);
+          var dateWithouthSecond = date.toLocaleString([],{year:'numeric', month:'2-digit', day:'2-digit', hour: '2-digit', minute:'2-digit'});
           user_name = value.name;
-          point_history.push({ index: index++, user: value.name, date: date.toLocaleString(), point: val[key].point});
+          // get house name
+          let house_id = val[key].house_id;
+          var snap1 = await database.ref(`houses/${this.state.schoolid}/${house_id}`).once('value');
+          const value1 = snap1.val();
+          house_name = value1.name;
+          point_history.push({ index: index++, user: value.name, house_name : house_name,  date: dateWithouthSecond, point: val[key].point});
           this.setState({
             point_history: point_history,
             no_history: false,
           })
+          this.refs.main.hideIndicator();
         });
         console.log('By house-->', point_history);
       } catch (error) {
+        this.refs.main.hideIndicator();
       }
     }
     this._hideDateTimePicker();
@@ -647,18 +759,15 @@ class PointHistoryScreen extends Component {
               left={Assets.menubtn}
               leftHandler={this.menuBtnClicked.bind(this)}
               title='Point History'
-              logo={Assets.logo}
-              rightData={optionsAry}
-              right={Assets.resetbtn}
-              rightHandler={this.resetBtnClicked.bind(this)} 
+              logo={Assets.point_history}
             />
             <View style={Styles.contentView}>
               <View style={{ zIndex: 100, flexDirection: 'row', paddingTop: 20, paddingLeft: 20, paddingRight: 10, alignSelf: 'flex-start'}}>
-                <View style={{ flexDirection: 'row', justifyContent: 'center', }}>
+                <View style={{ flexDirection: 'row' }}>
                   <View style={{  flexDirection: 'row'}}>
                     <Text style={{ color: 'white', fontSize: 18, alignSelf: 'flex-start'}}>Filter:</Text>
                   </View>
-                  <View style={{ alignSelf: 'center'}}>
+                  <View style={{ }}>
                     <View style={{ zIndex: 102, flexDirection: 'row'}}>
                       {/* <TextInput
                         style={Styles.filterHouseInput}
@@ -710,82 +819,92 @@ class PointHistoryScreen extends Component {
                             this.selectHouse(option.key, option.label);
                           }}
                         >
-                          <View style={Styles.filterHouseSelect}/>
+                          <View style={Styles.filterHouseSelect}>
+                             <Icon style={{paddingLeft:5}} name="chevron-down" size={30} color="white" />
+                          </View>
                         </ModalSelector>
                     </View>
-                    <View style={{ marginTop: 20, marginLeft: 20, flexDirection: 'row' }}>
+                    <View style={Styles.dateContainer}>
                       
-                        {/* <View style={{ flex: 1, width: 100, }}> */}
-                        <TextInput
-                        style={Styles.filterUserInput}
-                        editable={true}
-                        placeholder='User name'
-                        placeholderTextColor='gray'
-                        underlineColorAndroid='transparent'
-                        onChangeText={(text) => {
-                          this.filterUserSearch(text);
-                          this.setState({
-                            userListVisible: true,
-                            selectedUserName: text,
-                          });
+                      <View style={{ flexDirection: 'row', width : '50%'}}>
+                          {/* <View style={{ flex: 1, width: 100, }}> */}
+                          <TextInput
+                          style={Styles.filterUserInput}
+                          editable={true}
+                          placeholder='User name'
+                          placeholderTextColor='gray'
+                          underlineColorAndroid='transparent'
+                          onChangeText={(text) => {
+                            this.filterUserSearch(text);
+                            this.setState({
+                              userListVisible: true,
+                              selectedUserName: text,
+                            });
+                            }
                           }
-                        }
-                        value={ this.state.selectedUserName }
-                        />
-                        { this.state.userText.length > 0 && this.state.userListVisible &&
-                        <ListView
-                          style={{ height: 100, position: 'absolute', zIndex: 101, top: 35, left: 0, right: 0, bottom: 0 }}
-                          dataSource={ds.cloneWithRows(this.state.userDataSource)}
-                          renderRow={(user) => this.renderUser(user)} />
-                        }
-                        {/* </View> */}
-                        {/* <Autocomplete
+                          value={ this.state.selectedUserName }
+                          />
+                          { this.state.userText.length > 0 && this.state.userListVisible &&
+                          <ListView
+                            style={{ height: 100, position: 'absolute', zIndex: 101, top: 35, left: 0, right: 0, bottom: 0 }}
+                            dataSource={ds.cloneWithRows(this.state.userDataSource)}
+                            renderRow={(user) => this.renderUser(user)} />
+                          }
+                          {/* </View> */}
+                          {/* <Autocomplete
+                            data={this.state.userList}
+                            defaultValue={this.state.selectedUserName}
+                            onChangeText={text => this.setState({ selectedUserName: text })}
+                            renderItem={item => (
+                              <TouchableOpacity onPress={() => this.setState({ selectedUserName: item.label })}>
+                                <Text>{item.label}</Text>
+                              </TouchableOpacity>
+                            )}
+                          />
+                          </View> */}
+                            {/* <AutoSuggest
+                                onChangeText={(text) => console.log('input changing!')}
+                                terms={['Apple', 'Banana', 'Orange', 'Strawberry', 'Lemon', 'Cantaloupe', 'Peach', 'Mandarin', 'Date', 'Kiwi']}
+                              /> */}
+                              {/* </View> */}
+                          
+                        <ModalSelector
+                          key={this.state.houselist.key}                                
                           data={this.state.userList}
-                          defaultValue={this.state.selectedUserName}
-                          onChangeText={text => this.setState({ selectedUserName: text })}
-                          renderItem={item => (
-                            <TouchableOpacity onPress={() => this.setState({ selectedUserName: item.label })}>
-                              <Text>{item.label}</Text>
-                            </TouchableOpacity>
-                          )}
-                        />
-                        </View> */}
-                           {/* <AutoSuggest
-                              onChangeText={(text) => console.log('input changing!')}
-                              terms={['Apple', 'Banana', 'Orange', 'Strawberry', 'Lemon', 'Cantaloupe', 'Peach', 'Mandarin', 'Date', 'Kiwi']}
-                            /> */}
-                            {/* </View> */}
-                        
-                      <ModalSelector
-                        key={this.state.houselist.key}                                
-                        data={this.state.userList}
-                        cancelText='Cancel'
-                        selectStyle={{borderColor: 'transparent'}}
-                        // selectTextStyle={{fontSize: 20, color: 'white', fontWeight: 'bold', backgroundColor: 'transparent'}}
-                        optionStyle={{height: 40, alignItems: 'center', justifyContent: 'center'}}
-                        optionTextStyle={{fontSize: 16, fontWeight: 'bold'}}
-                        cancelStyle={{height: 40, alignItems: 'center', justifyContent: 'center'}}
-                        cancelTextStyle={{fontSize: 16, fontWeight: 'bold'}}
-                        onChange={(option)=>{ 
-                          this.selectUser(option.uid, option.label);}}
-                      >
-                        <View style={Styles.filterUserSelect}/>
-                      </ModalSelector>
-                      <TextInput
-                      style={Styles.filterDateInput}
-                      editable={false}
-                      placeholder='Date / Time'
-                      placeholderTextColor='gray'
-                      underlineColorAndroid='transparent'
-                      value={this.state.selectedDateLabel}
-                      />
-                      <TouchableOpacity onPress={this._showDateTimePicker} style={Styles.filterDateSelect}>
-                      </TouchableOpacity>
-                      <DateTimePicker
-                        isVisible={this.state.isDateTimePickerVisible}
-                        onConfirm={this._handleDatePicked}
-                        onCancel={this._hideDateTimePicker}
-                      />
+                          cancelText='Cancel'
+                          selectStyle={{borderColor: 'transparent'}}
+                          // selectTextStyle={{fontSize: 20, color: 'white', fontWeight: 'bold', backgroundColor: 'transparent'}}
+                          optionStyle={{height: 40, alignItems: 'center', justifyContent: 'center'}}
+                          optionTextStyle={{fontSize: 16, fontWeight: 'bold'}}
+                          cancelStyle={{height: 40, alignItems: 'center', justifyContent: 'center'}}
+                          cancelTextStyle={{fontSize: 16, fontWeight: 'bold'}}
+                          onChange={(option)=>{ 
+                            this.selectUser(option.uid, option.label);}}
+                        >
+                          <View style={Styles.filterUserSelect}>
+                           <Icon style={{paddingLeft:5}} name="chevron-down" size={30} color="white" />
+                          </View>
+                        </ModalSelector>
+                      </View>
+                      <View style={{ flexDirection: 'row', width : '50%', justifyContent:'flex-end' }}>
+                          <TextInput
+                          style={Styles.filterDateInput}
+                          editable={false}
+                          placeholder='Date / Time'
+                          placeholderTextColor='gray'
+                          underlineColorAndroid='transparent'
+                          value={this.state.selectedDateLabel}
+                          />
+                          <TouchableOpacity onPress={this._showDateTimePicker} style={Styles.filterDateSelect}>
+                            <Icon style={{paddingLeft:5}} name="chevron-down" size={30} color="white" />
+                          </TouchableOpacity>
+                          <DateTimePicker
+                            isVisible={this.state.isDateTimePickerVisible}
+                            onConfirm={this._handleDatePicked}
+                            onCancel={this._hideDateTimePicker}
+                          />
+                      </View>
+                    
                     </View>
                   </View>
                 </View>
@@ -793,13 +912,20 @@ class PointHistoryScreen extends Component {
               <ScrollView style={{ marginLeft: 20, marginRight: 20, marginTop: 30, marginBottom: 30 }}>
                 { this.state.no_history && <Text style={{ color: 'white', fontSize: 18, alignSelf: 'center' }}>No history to show</Text>}
                 { this.state.point_history.length > 0 &&
-                this.state.point_history.map((item, index) => (
-                  <View key={index} style={Styles.line}>
-                    <Text style={{ color: 'white', fontSize: 18 }}>{item.user}</Text>
-                    <Text style={{ color: 'white', fontSize: 18 }}>{item.date}</Text>
-                    <Text style={{ color: 'white', fontSize: 18 }}>{item.point}</Text>
-                  </View>
-                ))}
+                  this.state.point_history.map((item, index) => (
+                    <View key={index}>
+                    <View style={Styles.item_top} >
+                      <Text style={{ color: 'white', fontSize: 16 }}>{item.user}</Text>
+                      <Text style={{ color: 'white', fontSize: 14 }}>{item.date}</Text>
+                    </View>
+                    <View style={Styles.line}>
+                    <Text style={{ color: 'white', fontSize: 16, fontWeight:'700' }}>{item.house_name}</Text>
+                    <Text style={{ color: 'white', fontSize: 16, fontWeight:'700'  }}>{item.point>0 &&  <Text>+</Text>}{item.point}</Text>
+                     
+                    </View>
+                    </View>
+                  ))
+                }
               </ScrollView>
             </View>
           </ImageBackground>

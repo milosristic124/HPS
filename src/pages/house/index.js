@@ -45,9 +45,9 @@ class HouseScreen extends Component {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     let ref = database.ref(`schools/${this.state.schoolid}`);
-    ref.on('value', (snapshot) => {
+    await ref.on('value', (snapshot) => {
       var ary = [];
       let index = 0;
       snapshot.forEach((child) => {
@@ -55,14 +55,12 @@ class HouseScreen extends Component {
       });
 
       this.setState({
-        ...this.state,
         points: ary
       });
     });
     let ref1 = database.ref(`houses/${this.state.schoolid}/${this.state.index}`);
     ref1.on('value', (snapshot) => {
       this.setState({
-        ...this.state,
         data: snapshot.val()
       })
     });
