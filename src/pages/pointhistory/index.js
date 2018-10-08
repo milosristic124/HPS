@@ -768,7 +768,7 @@ class PointHistoryScreen extends Component {
                     <Text style={{ color: 'white', fontSize: 18, alignSelf: 'flex-start'}}>Filter:</Text>
                   </View>
                   <View style={{ }}>
-                    <View style={{ zIndex: 102, flexDirection: 'row'}}>
+                    <View style={{ zIndex: 102 }}>
                       {/* <TextInput
                         style={Styles.filterHouseInput}
                         editable={true}
@@ -782,71 +782,96 @@ class PointHistoryScreen extends Component {
                             })
                         }}
                         /> */}
-                        <TextInput
-                          style={Styles.filterHouseInput}
-                          editable={true}
-                          placeholder='House name'
-                          placeholderTextColor='gray'
-                          underlineColorAndroid='transparent'
-                          defaultValue='House: '
-                          onChangeText={(text) => {
-                            this.filterHouseSearch(text);
-                            this.setState({
-                              houseListVisible: true,
-                              selectedHouseName: text,
-                            });
+                        <View style={{flexDirection: 'row'}}>
+                          <TextInput
+                            style={Styles.filterHouseInput}
+                            editable={true}
+                            placeholder='House name'
+                            placeholderTextColor='gray'
+                            underlineColorAndroid='transparent'
+                            defaultValue='House: '
+                            onChangeText={(text) => {
+                              this.filterHouseSearch(text);
+                              this.setState({
+                                houseListVisible: true,
+                                selectedHouseName: text,
+                              });
+                              }
                             }
-                          }
-                          value={ this.state.selectedHouseName }
-                        />
+                            value={ this.state.selectedHouseName }
+                          />
+                       
+                              <ModalSelector
+                              key={this.state.houselist.key}                                
+                              data={this.state.houselist}
+                              cancelText='Cancel'
+                              selectStyle={{borderColor: 'transparent'}}
+                              // selectTextStyle={{fontSize: 20, color: 'white', fontWeight: 'bold', backgroundColor: 'transparent'}}
+                              optionStyle={{height: 40, alignItems: 'center', justifyContent: 'center'}}
+                              optionTextStyle={{fontSize: 16, fontWeight: 'bold'}}
+                              cancelStyle={{height: 40, alignItems: 'center', justifyContent: 'center'}}
+                              cancelTextStyle={{fontSize: 16, fontWeight: 'bold'}}
+                              onChange={(option)=>{
+                                this.selectHouse(option.key, option.label);
+                              }}
+                            >
+                              <View style={Styles.filterHouseSelect}>
+                                 <Icon style={{paddingLeft:5}} name="chevron-down" size={30} color="white" />
+                              </View>
+                            </ModalSelector>
+                        </View>
+
                         { this.state.houseText.length > 0 && this.state.houseListVisible &&
-                        <ListView
-                          style={{ height: 400, position: 'absolute', zIndex: 101, top: 35, left: 20, right: 0, bottom: 0 }}
-                          dataSource={ds.cloneWithRows(this.state.houseDataSource)}
-                          renderRow={(house) => this.renderHouse(house)} />
+                          <ListView
+                            style={{ zIndex: 101,left: 20 }}
+                            dataSource={ds.cloneWithRows(this.state.houseDataSource)}
+                            renderRow={(house) => this.renderHouse(house)} />
                         }
-                        <ModalSelector
-                          key={this.state.houselist.key}                                
-                          data={this.state.houselist}
-                          cancelText='Cancel'
-                          selectStyle={{borderColor: 'transparent'}}
-                          // selectTextStyle={{fontSize: 20, color: 'white', fontWeight: 'bold', backgroundColor: 'transparent'}}
-                          optionStyle={{height: 40, alignItems: 'center', justifyContent: 'center'}}
-                          optionTextStyle={{fontSize: 16, fontWeight: 'bold'}}
-                          cancelStyle={{height: 40, alignItems: 'center', justifyContent: 'center'}}
-                          cancelTextStyle={{fontSize: 16, fontWeight: 'bold'}}
-                          onChange={(option)=>{
-                            this.selectHouse(option.key, option.label);
-                          }}
-                        >
-                          <View style={Styles.filterHouseSelect}>
-                             <Icon style={{paddingLeft:5}} name="chevron-down" size={30} color="white" />
-                          </View>
-                        </ModalSelector>
+                    
                     </View>
                     <View style={Styles.dateContainer}>
                       
-                      <View style={{ flexDirection: 'row', width : '50%'}}>
+                      <View style={{ width : '50%'}}>
                           {/* <View style={{ flex: 1, width: 100, }}> */}
-                          <TextInput
-                          style={Styles.filterUserInput}
-                          editable={true}
-                          placeholder='User name'
-                          placeholderTextColor='gray'
-                          underlineColorAndroid='transparent'
-                          onChangeText={(text) => {
-                            this.filterUserSearch(text);
-                            this.setState({
-                              userListVisible: true,
-                              selectedUserName: text,
-                            });
+                         <View style={{flexDirection: 'row'}}>
+                            <TextInput
+                            style={Styles.filterUserInput}
+                            editable={true}
+                            placeholder='User name'
+                            placeholderTextColor='gray'
+                            underlineColorAndroid='transparent'
+                            onChangeText={(text) => {
+                              this.filterUserSearch(text);
+                              this.setState({
+                                userListVisible: true,
+                                selectedUserName: text,
+                              });
+                              }
                             }
-                          }
-                          value={ this.state.selectedUserName }
-                          />
+                            value={ this.state.selectedUserName }
+                            />
+
+                             <ModalSelector
+                              key={this.state.houselist.key}                                
+                              data={this.state.userList}
+                              cancelText='Cancel'
+                              selectStyle={{borderColor: 'transparent'}}
+                              // selectTextStyle={{fontSize: 20, color: 'white', fontWeight: 'bold', backgroundColor: 'transparent'}}
+                              optionStyle={{height: 40, alignItems: 'center', justifyContent: 'center'}}
+                              optionTextStyle={{fontSize: 16, fontWeight: 'bold'}}
+                              cancelStyle={{height: 40, alignItems: 'center', justifyContent: 'center'}}
+                              cancelTextStyle={{fontSize: 16, fontWeight: 'bold'}}
+                              onChange={(option)=>{ 
+                                this.selectUser(option.uid, option.label);}}
+                            >
+                              <View style={Styles.filterUserSelect}>
+                                <Icon style={{paddingLeft:5}} name="chevron-down" size={30} color="white" />
+                              </View>
+                            </ModalSelector>  
+                          </View>
                           { this.state.userText.length > 0 && this.state.userListVisible &&
                           <ListView
-                            style={{ height: 100, position: 'absolute', zIndex: 101, top: 35, left: 0, right: 0, bottom: 0 }}
+                            style={{ zIndex: 101,  left: 0 }}
                             dataSource={ds.cloneWithRows(this.state.userDataSource)}
                             renderRow={(user) => this.renderUser(user)} />
                           }
@@ -868,23 +893,7 @@ class PointHistoryScreen extends Component {
                               /> */}
                               {/* </View> */}
                           
-                        <ModalSelector
-                          key={this.state.houselist.key}                                
-                          data={this.state.userList}
-                          cancelText='Cancel'
-                          selectStyle={{borderColor: 'transparent'}}
-                          // selectTextStyle={{fontSize: 20, color: 'white', fontWeight: 'bold', backgroundColor: 'transparent'}}
-                          optionStyle={{height: 40, alignItems: 'center', justifyContent: 'center'}}
-                          optionTextStyle={{fontSize: 16, fontWeight: 'bold'}}
-                          cancelStyle={{height: 40, alignItems: 'center', justifyContent: 'center'}}
-                          cancelTextStyle={{fontSize: 16, fontWeight: 'bold'}}
-                          onChange={(option)=>{ 
-                            this.selectUser(option.uid, option.label);}}
-                        >
-                          <View style={Styles.filterUserSelect}>
-                           <Icon style={{paddingLeft:5}} name="chevron-down" size={30} color="white" />
-                          </View>
-                        </ModalSelector>
+                       
                       </View>
                       <View style={{ flexDirection: 'row', width : '50%', justifyContent:'flex-end' }}>
                           <TextInput

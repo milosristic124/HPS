@@ -51,7 +51,7 @@ export default StyleSheet.create({
     fontSize: 15,
   },
   filterUserInput: { 
-    height: 36,
+    height: 40,
     width : (Metrics.screenWidth - 210)/2,
     fontSize: 16, 
     color: 'white', 
@@ -69,7 +69,7 @@ export default StyleSheet.create({
   },
   filterUserSelect: { 
     width: 40, 
-    height: 35, 
+    height: 40, 
     backgroundColor: 'transparent', 
     borderTopRightRadius: 5, 
     borderBottomRightRadius: 5, 
@@ -77,7 +77,7 @@ export default StyleSheet.create({
     borderColor: 'white'
   },
   filterDateInput: { 
-    height: 36,
+    height: 40,
     fontSize: 16, 
     color: 'white', 
     backgroundColor: 'transparent', 
@@ -95,7 +95,7 @@ export default StyleSheet.create({
   },
   filterDateSelect: { 
     width: 40, 
-    height: 35, 
+    height: 40, 
     backgroundColor: 'transparent', 
     borderTopRightRadius: 5, 
     borderBottomRightRadius: 5, 
@@ -110,7 +110,7 @@ export default StyleSheet.create({
     
   },
   filterHouseInput: { 
-    height: 36,
+    height: 40,
     width: Metrics.screenWidth - 150,
     fontSize: 16, 
     color: 'white', 
@@ -132,7 +132,7 @@ export default StyleSheet.create({
     borderWidth :1,
     borderColor : 'blue',
     width: 40, 
-    height: 35, 
+    height: 40, 
     backgroundColor: 'transparent', 
     borderTopRightRadius: 5, 
     borderBottomRightRadius: 5, 
