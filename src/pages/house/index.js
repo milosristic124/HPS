@@ -164,7 +164,7 @@ class HouseScreen extends Component {
               }}
             >
               <FastImage 
-                source={{uri: this.state.data.url, priority: FastImage.priority.normal}} 
+                source={{uri: !this.state.data || !this.state.data.url ? '../../../assets/resources/addbtn.png' : this.state.data.url, priority: FastImage.priority.normal}} 
                 style={{ flex: 0.8, width: Metrics.screenWidth * 0.8 }}
                 resizeMode={FastImage.resizeMode.contain}/>
             </View>

@@ -801,7 +801,7 @@ class PointHistoryScreen extends Component {
                         />
                         { this.state.houseText.length > 0 && this.state.houseListVisible &&
                         <ListView
-                          style={{ height: 100, position: 'absolute', zIndex: 101, top: 35, left: 20, right: 0, bottom: 0 }}
+                          style={{ height: 400, position: 'absolute', zIndex: 101, top: 35, left: 20, right: 0, bottom: 0 }}
                           dataSource={ds.cloneWithRows(this.state.houseDataSource)}
                           renderRow={(house) => this.renderHouse(house)} />
                         }

@@ -51,7 +51,7 @@ export default StyleSheet.create({
     fontSize: 15,
   },
   filterUserInput: { 
-    height: 35,
+    height: 36,
     width : (Metrics.screenWidth - 210)/2,
     fontSize: 16, 
     color: 'white', 
@@ -77,7 +77,7 @@ export default StyleSheet.create({
     borderColor: 'white'
   },
   filterDateInput: { 
-    height: 35,
+    height: 36,
     fontSize: 16, 
     color: 'white', 
     backgroundColor: 'transparent', 
@@ -110,7 +110,7 @@ export default StyleSheet.create({
     
   },
   filterHouseInput: { 
-    height: 35,
+    height: 36,
     width: Metrics.screenWidth - 150,
     fontSize: 16, 
     color: 'white', 
